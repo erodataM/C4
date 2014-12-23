@@ -1,6 +1,7 @@
 #include <iostream>
 #include <chrono>
 #include <vector>
+
 #include <windows.h>
 
 #include "Position.h"

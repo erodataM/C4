@@ -1,6 +1,4 @@
 #include <iostream>
-
-#include <bitset>
 #include <vector>
 
 #include <windows.h>
@@ -210,7 +208,7 @@ int Position::val()
     for(int i = 0; i < 42; ++i)
     {        
         if(this->isBit(i+7) && this->isBitSetable(i)) {            
-            int red = false;
+            bool red = false;
             bool yellow = false;
             for(int j = 0; j < Position::winningMasks[i].size(); ++j) {                                
                 long long evalMask = Position::winningMasks[i][j] & (~(constants::one << i));                                                
