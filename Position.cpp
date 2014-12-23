@@ -17,11 +17,7 @@ Position::Position(long long yellow, long long red, bool turn, char last)
     
     if(Position::winningMasks[0].size() == 0) {
         Position::calcWinningMasks();
-    }
-
-    if(Position::evalMasks[0].size() == 0) {
-        Position::calcEvalMasks();
-    }    
+    }       
 }
 
 Position::Position(Position* position) 
@@ -33,16 +29,10 @@ Position::Position(Position* position)
     
     if(Position::winningMasks[0].size() == 0) {
         Position::calcWinningMasks();
-    }
-    
-    if(Position::evalMasks[0].size() == 0) {
-        Position::calcEvalMasks();
-    }
+    }        
 }
 
 std::vector<long long> Position::winningMasks[42];
-
-std::vector<long long> Position::evalMasks[42];
 
 bool Position::getTurn()
 {
@@ -111,18 +101,16 @@ std::vector<Position> Position::generate(void)
 }
 
 bool Position::isBitSet(int n, bool color)
-{
-    long long one = 1;
-    return color?this->yellow&(one << n):this->red&(one << n);        
+{    
+    return color?this->yellow&(constants::one << n):this->red&(constants::one << n);        
 }
 
 void Position::setBit(int n, bool color)
-{
-    long long one = 1;
+{    
     if(color) {                        
-        this->yellow |= one << n;
+        this->yellow |= constants::one << n;
     } else {                
-        this->red    |= one << n;
+        this->red    |= constants::one << n;
     } 
 }
 
@@ -160,19 +148,21 @@ void Position::display()
     {
         int color = 0;
         if(this->last == i) {
-            color += 12;
-        } else {
-            color += 15;
-        }
-        
-        SetConsoleTextAttribute(hConsole, color);
-        
+            color += 8 * 16;
+        } 
+                        
         if(this->isBitSet(i,true)) {                        
+            color += 12;
+            SetConsoleTextAttribute(hConsole, color);
             std::cout << 2;
         } else {
             if(this->isBitSet(i,false)) {                                
+                color += 14;
+                SetConsoleTextAttribute(hConsole, color);
                 std::cout << 1;
             } else {                
+                color += 15;
+                SetConsoleTextAttribute(hConsole, color);
                 std::cout << 0;    
             }
         }
@@ -188,13 +178,13 @@ int Position::eval(int depth, int eval)
     int s = this->turn?-1:1; 
     
     if(this->isWon()) {
-        return s * 1000;
+        return s * 1000 * (depth +1);
     }
     
     if(depth != 0) {
         std::vector<Position> vectorPos = this->generate();
         
-        int limit = s * 10000;        
+        int limit = s * 1000000;        
         
         for(int i=0; i < vectorPos.size(); ++i)
         {                                    
@@ -207,41 +197,43 @@ int Position::eval(int depth, int eval)
         
         eval = limit;
     } else {
-        eval = 0;
+        eval = s * this->val();
     }
     
     return eval;    
 }
 
-void Position::calcWinningMasks()
-{        
-    long long one = 1;    
-                
+int Position::val()
+{
+    int val = 0;        
     for(int i = 0; i < 42; ++i)
-    {                        
-        for(int j = 0; j < 69; ++j)
-        {        
-            if(constants::winningMasks[j] & (one << i)) 
-            {                
-                Position::winningMasks[i].push_back(constants::winningMasks[j]);
+    {
+        if(this->isBit(i+7) && this->isBitSetable(i)) {            
+            for(int j =0; j < Position::winningMasks[i].size(); ++j) {                                
+                long long evalMask = Position::winningMasks[i][j] & (~(constants::one << i));
+                if((evalMask & this->red) == evalMask) {                    
+                    
+                    val += 1;                    
+                }
+                if((evalMask & this->yellow) == evalMask) {
+                    val -= 1;                    
+                }                
             }
-        }                                             
-    }                
+        }
+    }
+    
+    return val;
 }
 
-void Position::calcEvalMasks()
-{        
-    long long one = 1;    
-                
+void Position::calcWinningMasks()
+{                            
     for(int i = 0; i < 42; ++i)
     {                        
         for(int j = 0; j < 69; ++j)
         {        
-            if(constants::winningMasks[j] & (one << i)) 
+            if(constants::winningMasks[j] & (constants::one << i)) 
             {                
-                for(int k = 0; k < 42; ++k) {
-                    
-                }
+                Position::winningMasks[i].push_back(constants::winningMasks[j]);
             }
         }                                             
     }                

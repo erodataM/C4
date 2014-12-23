@@ -43,9 +43,10 @@ public:
   void display();
     
   int eval(int depth, int eval);
+  
+  int val();
            
-  static std::vector<long long> winningMasks[42];
-  static std::vector<long long> evalMasks[42];
+  static std::vector<long long> winningMasks[42];  
     
 private:    
   bool turn;    
@@ -53,8 +54,7 @@ private:
   long long yellow;
   long long red;
     
-  static void calcWinningMasks();
-  static void calcEvalMasks();
+  static void calcWinningMasks();  
 };
  
 #endif

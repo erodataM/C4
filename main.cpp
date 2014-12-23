@@ -11,30 +11,77 @@ int main(int argc, char** argv) {
     HANDLE  hConsole;
     hConsole = GetStdHandle(STD_OUTPUT_HANDLE);    
     
+    /*
+     * test unset bit
+     * 
+    long long test = 0b000000000000000000000000000000000000000001;
+    long long one = 1;
+    long long test1 = test & (~(one << 0));
+    
+    cout << test1 << endl;
+    
+    return 0;
+    */
+    
+    /*
+     * test val()
+     *
+    Position pos = Position(
+        0b000000000000000000000000000000000000000000,
+        0b000000000011100000000000000000000000000000,
+        true,
+        38
+    );
+    
+    pos.display();
+    
+    cout << pos.val() << endl;
+    
+    return 0;
+     */
+        
     Position position = Position(
-        0b000000000000000000000000000000000000000000,        
+        0b000000000000000000000000000000000000000000,
         0b000100000000000000000000000000000000000000,
         true,
         38
     );                        
     
-    position.display();
+    
+    
+    position.display();        
     
     int depth = 8;
     
     int colonne;
     while(1) {
         cin >> colonne;        
-                
-        for(int i = 41 - (6 - colonne); i >= 0;i = i - 7) {
-            if(position.isBitSetable(i)) {
+        
+        if(colonne < 0 || colonne > 6) {
+            SetConsoleTextAttribute(hConsole, 12);
+            cout << "Invalid move" << endl;
+            SetConsoleTextAttribute(hConsole, 15);
+            continue;
+        }
+        
+        bool turn = position.getTurn();   
+        
+        for(int i = 41 - (6 - colonne); i >= 0;i = i - 7) {            
+            if(position.isBit(i)) {            
                 position.setBit(i, position.getTurn());
                 position.setTurn(!position.getTurn());
                 position.setLast(i);
                 break;
             }
         }
-                                
+        
+        if(turn == position.getTurn()) {
+            SetConsoleTextAttribute(hConsole, 12);
+            cout << "Invalid move" << endl;
+            SetConsoleTextAttribute(hConsole, 15);
+            continue;
+        }
+        
         position.display();                
         
         vector<Position> vectorPos = position.generate();   
@@ -82,9 +129,17 @@ int main(int argc, char** argv) {
         SetConsoleTextAttribute(hConsole, 15);
         cout << eval << " (" << vectorGoodPos.size() << ")" << endl;
                                        
+        /*
         if(vectorGoodPos.size() > 1) {
-            
-        }              
+            SetConsoleTextAttribute(hConsole, 2);
+            cout << "pref : ";
+            SetConsoleTextAttribute(hConsole, 15);
+            for(int i = 0;i < vectorGoodPos.size(); ++i) {
+                cout << vectorGoodPos[i].val() << " ";
+            }
+            cout << endl;
+        } 
+        */             
         
         end = chrono::system_clock::now();        
         
