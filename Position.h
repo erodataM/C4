@@ -36,24 +36,25 @@ public:
   bool isBit(int n);
   
   void setBit(int n, bool color);   
-    
+      
   
   bool isWon();
-  
-      
+        
   void display();
-  
-  
+    
   int eval(int depth, int eval);
-      
-  
-  int pref(int n);
+           
+  static std::vector<long long> winningMasks[42];
+  static std::vector<long long> evalMasks[42];
     
 private:    
   bool turn;    
   char last;
   long long yellow;
-  long long red;  
+  long long red;
+    
+  static void calcWinningMasks();
+  static void calcEvalMasks();
 };
  
 #endif
