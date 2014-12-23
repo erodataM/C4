@@ -45,6 +45,8 @@ public:
   int eval(int depth, int eval);
   
   int val();
+  
+  int val2();
            
   static std::vector<long long> winningMasks[42];  
     

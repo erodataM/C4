@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
      * test val()
      *
     Position pos = Position(
-        0b000000000000000000000000000000000000000000,
+        0b000000000000000001110000000000000000000000,
         0b000000000011100000000000000000000000000000,
         true,
         38
@@ -37,18 +37,16 @@ int main(int argc, char** argv) {
     
     cout << pos.val() << endl;
     
-    return 0;
-     */
-        
+    return 0;    
+    */
+    
     Position position = Position(
         0b000000000000000000000000000000000000000000,
         0b000100000000000000000000000000000000000000,
         true,
         38
     );                        
-    
-    
-    
+            
     position.display();        
     
     int depth = 8;

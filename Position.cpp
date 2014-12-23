@@ -206,23 +206,54 @@ int Position::eval(int depth, int eval)
 int Position::val()
 {
     int val = 0;        
-    for(int i = 0; i < 42; ++i)
-    {
-        if(this->isBit(i+7) && this->isBitSetable(i)) {            
-            for(int j =0; j < Position::winningMasks[i].size(); ++j) {                                
-                long long evalMask = Position::winningMasks[i][j] & (~(constants::one << i));
-                if((evalMask & this->red) == evalMask) {                    
                     
-                    val += 1;                    
+    for(int i = 0; i < 42; ++i)
+    {        
+        if(this->isBit(i+7) && this->isBitSetable(i)) {            
+            int red = false;
+            bool yellow = false;
+            for(int j = 0; j < Position::winningMasks[i].size(); ++j) {                                
+                long long evalMask = Position::winningMasks[i][j] & (~(constants::one << i));                                                
+                if(!red && ((evalMask & this->red) == evalMask)) {                    
+                    val += i/7;                    
+                    red = true;
                 }
-                if((evalMask & this->yellow) == evalMask) {
-                    val -= 1;                    
-                }                
-            }
+                if(!yellow && ((evalMask & this->yellow) == evalMask)) {
+                    val -= i/7; 
+                    yellow = true;
+                }
+            }            
         }
     }
     
     return val;
+}
+
+int Position::val2()
+{
+    int val[7];                
+    for(int i = 0; i < 7; ++i)
+    {        
+        int red[5];
+        int yellow[5];
+        for(int j = 34 - (6 - i); j >= 0;i = j - 7) {
+            red[j] = 0;
+            yellow[j] = 0;
+            if(this->isBitSetable(j)) { 
+                for(int k = 0; k < Position::winningMasks[j].size(); ++k) { 
+                    long long evalMask = Position::winningMasks[j][k] & (~(constants::one << j));                                              
+                    if((evalMask & this->red) == evalMask) {            
+                        red[j] = 1;
+                    }                    
+                    if((evalMask & this->yellow) == evalMask) {            
+                        yellow[j] = 1;
+                    }
+                }                
+            }
+        }                      
+    }
+    
+    return val[0];
 }
 
 void Position::calcWinningMasks()
