@@ -207,18 +207,14 @@ int Position::val()
                     
     for(int i = 0; i < 42; ++i)
     {        
-        if(this->isBit(i+7) && this->isBitSetable(i)) {            
-            bool red = false;
-            bool yellow = false;
+        if(this->isBit(i+7) && this->isBitSetable(i)) {                        
             for(int j = 0; j < Position::winningMasks[i].size(); ++j) {                                
                 long long evalMask = Position::winningMasks[i][j] & (~(constants::one << i));                                                
-                if(!red && ((evalMask & this->red) == evalMask)) {                    
-                    val += i/7;                    
-                    red = true;
+                if((evalMask & this->red) == evalMask) {                    
+                    val += i/7;                                        
                 }
-                if(!yellow && ((evalMask & this->yellow) == evalMask)) {
-                    val -= i/7; 
-                    yellow = true;
+                if((evalMask & this->yellow) == evalMask) {
+                    val -= i/7;                     
                 }
             }            
         }
